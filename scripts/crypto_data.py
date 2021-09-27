@@ -16,7 +16,7 @@ start_time = time()
 async def trade(data, *args, **kwargs):
 
     temp = {}
-    temp["time"], temp["amount"], temp["price"], temp["symbol"], temp["timestamp"] = int(data.timestamp * 1000000), data.amount, data.price, data.symbol, datetime.fromtimestamp(data.timestamp)
+    temp["time"], temp["amount"], temp["symbol"], temp["price"], temp["side"], temp["timestamp"] = int(data.timestamp * 1000000), data.amount, data.symbol, data.price, data.side, datetime.fromtimestamp(data.timestamp)
 
     trades.append(temp)
 
