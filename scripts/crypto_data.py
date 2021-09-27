@@ -12,6 +12,20 @@ trades = []
 
 start_time = time()
 
+def stop_loop_and_save_csv():
+    import pandas as pd
+    import asyncio
+
+    df = pd.DataFrame.from_dict(trades)
+    df.to_csv(r'trades.csv', index=False, header=True)
+
+    print("Took {} seconds to collect {} records...".format( time() - start_time(), len(trades) ))
+
+    loop = asyncio.get_event_loop()
+    loop.stop()
+
+    exit()
+
 # Callback for trade(s) feed
 async def trade(data, *args, **kwargs):
 
@@ -20,25 +34,18 @@ async def trade(data, *args, **kwargs):
 
     trades.append(temp)
 
+    print("{}: {}\t{}\t{}\t{}\t".format( len(trades), temp["time"], temp["side"], temp["amount"], temp["price"] ))
+
     # Save & exit when we reach our desired no. of records
-    if len(trades) == total_records:
-        import pandas as pd
-        import asyncio
-
-        df = pd.DataFrame.from_dict(trades)
-        df.to_csv(r'trades.csv', index=False, header=True)
-
-        print("Took {} seconds to collect {} records...".format( time() - start_time, total_records))
-
-        loop = asyncio.get_event_loop()
-        loop.stop()
-
-        exit()
+    if len(trades) == total_records: stop_loop_and_save_csv()
 
 def main():
-    feed = FeedHandler()
-    feed.add_feed(Binance(symbols=['BTC-USDT'], channels=[TRADES], callbacks={TRADES: trade}))
-    feed.run()
+    try:
+        feed = FeedHandler()
+        feed.add_feed(Binance(symbols=['BTC-USDT'], channels=[TRADES], callbacks={TRADES: trade}))
+        feed.run()
+    except:
+        stop_loop_and_save_csv()
 
 if __name__ == "__main__":
     main()
