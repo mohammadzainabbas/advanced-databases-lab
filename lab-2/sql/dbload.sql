@@ -1,5 +1,5 @@
 Begin transaction
-use triggers
+use Lab_2
 delete from Dependent
 delete from DeptLocations
 delete from WorksOn
