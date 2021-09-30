@@ -1,3 +1,7 @@
+create database Lab_2;
+GO
+use Lab_2;
+
 create table Employee (
   FName varchar(15) not null,
   MInit char(1),
@@ -56,4 +60,6 @@ create table WorksOn (
   constraint FK_WorksOn_Employee foreign key (ESSN) references Employee (SSN),
   constraint FK_WorksOn_Project foreign key (PNo) references Project (PNumber)
 ) 
+
+SELECT GETDATE() as "Current Date/Time";
 
