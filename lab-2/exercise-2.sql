@@ -19,7 +19,7 @@ if exists(
     SELECT *
     from inserted I, Employee E
     WHERE ((I.SuperSSN = E.SSN) and (I.BDate < E.BDate)) /* For insertion/updation of employee */
-    or ((I.SSN = E.SuperSSN) and (I.BDate > E.BDate))
+    or ((I.SSN = E.SuperSSN) and (I.BDate > E.BDate)) /* For insertion/updation of supervisor */
 )
 BEGIN
     RAISERROR('Constraint Violation: The age of an employee must be less than the age of his/her supervisor', 1, 1)
