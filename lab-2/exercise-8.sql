@@ -2,31 +2,39 @@ use Lab_2
 
 /*
 -------------------------------
-Exercise - 7
+Exercise - 8
 -------------------------------
 
-- A supervisor must be hired at least 1 year before every employee s/he supervises.
+- The attribute Department.NbrEmployees is a derived attribute from Employee.DNo
 
 */
 
 select * from Employee
+select * from Department
 
-create trigger superVisor_must_be_hired_one_year_before_supervised_employees
+create trigger derive_attribute_for_no_of_employees
 on Employee
-after insert, update 
-as
-if exists(
-    select * 
-    from Inserted I, Employee E
-    where
-     ( I.SuperSSN = E.SSN and DATEDIFF( YEAR, E.HireDate, I.HireDate ) < 1 )
-    or
-     ( E.SuperSSN = I.SSN and DATEDIFF( YEAR, I.HireDate, E.HireDate ) < 1 )
-)
+after insert, update, delete
+AS
 BEGIN
 
-    RAISERROR('Sorry dude! You can not have an employee with a manager having less than 1 year of experience. Now go home and cry ...', 1, 1)
+    update D
+    set nbrEmployees = (select COUNT(*) from Employee E where E.DNo = D.DNumber)
+    from Department D
+    where D.DNumber in ( select distinct I.DNo from inserted I ) or D.DNumber in ( select distinct DD.DNo from deleted DD )
 
-    ROLLBACK
+/*
+
+-------------------------------------------------------------------------------------------------
+The below one will not work in SQL Server but it will work in Oracle, MySQL and other SQL DBMS.
+
+https://stackoverflow.com/questions/4981481/how-to-write-update-sql-with-table-alias-in-sql-server-2008
+-------------------------------------------------------------------------------------------------
+
+update Department D
+set nbrEmployees = (select COUNT(*) from Employee E where E.DNo = D.DNumber)
+where D.DNumber in ( select distinct I.DNo from inserted I ) or D.DNumber in ( select distinct DD.DNo from deleted DD )
+
+*/
 
 END
