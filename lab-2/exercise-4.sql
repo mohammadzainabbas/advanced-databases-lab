@@ -7,7 +7,7 @@ Exercise - 4
 
 - The manager of a department must be an employee of that department.
 
-=> It can be done with triggers but we need two triggers here (one for each table "Employee" & "Department")
+=> It can be done with triggers too but we need two triggers here (one for each table "Employee" & "Department")
 
 */
 
