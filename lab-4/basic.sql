@@ -32,3 +32,21 @@ create table EmployeeAddress (
     constraint PK_employee_address primary key (AddressID),
     constraint FK_employee_address foreign key (SSN) references (Employee.SSN)
 )
+
+/* ========================================== */
+
+use temporal_db;
+
+SELECT name
+from sys.tables
+
+/*
+--------------------------------------------------
+To show all data in all tables in a database
+--------------------------------------------------
+*/
+
+DECLARE @sqlText VARCHAR(MAX)
+SET @sqlText = ''
+SELECT @sqlText = @sqlText + 'select '''+QUOTENAME(name)+'''; SELECT * FROM ' + QUOTENAME(name) + CHAR(13) FROM sys.tables
+EXEC(@sqlText)
