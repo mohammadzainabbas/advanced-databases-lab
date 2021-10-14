@@ -1,4 +1,4 @@
-use ...
+use temporal_db
 set dateformat dmy
 insert Employee(FName, MInit, LName, SSN, BirthDate, Sex)
   values('John', 'B', 'Smith', '123456789', '09-05-1955', 'M')
