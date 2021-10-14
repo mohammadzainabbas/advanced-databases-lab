@@ -1,6 +1,7 @@
-create database ...
+create database temporal_db;
 go
-use ...
+use temporal_db;
+
 create table Employee (
   SSN char(9) not null,
   FName varchar(15) not null,
