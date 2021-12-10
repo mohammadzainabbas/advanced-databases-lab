@@ -1,0 +1,105 @@
+\l
+create database advanced_db;
+\c advanced_db
+\! clear
+create extension postgis;
+create extension postgis_raster;
+\i create_tables.sql 
+\set HISTFILE ~/.psql_history-:advanced_db
+\i insertion.sql 
+\echo HISTFILE
+\echo $HISTFILE
+\e HIST
+\echo ~
+\set HISTFILE /.psql_history-:advanced_db
+\dt
+\set HISTFILE /queries/.psql_history_advanced_db
+drop table cities, regions;
+drop table cities;
+drop table regions;
+\! pwd
+\cd queries/
+\! pwd
+\! whoami
+\s queries.log
+\echo "hello"
+\q
+create extension postgis;
+\i create_tables.sql 
+\i insertion.sql 
+\i shp_insert.sql 
+\dt
+SELECT UpdateGeometrySRID('bel_regn', 'geom', 4326);
+\i change_srid.sql 
+select ST_SRID(geom) from bel_city limit 1;
+table spatial_ref_sys;
+q
+\! clear
+select srtext from spatial_ref_sys where srid=4326;
+select srtext from spatial_ref_sys where srid=4326;
+select ST_Dimension(geom) from bel_city limit 1;
+select ST_CooridDim(geom) from bel_city limit 1;
+select ST_CoordDim(geom) from bel_city limit 1;
+select coord_dimension from geometry_columns where f_table_name = 'bel_city';
+select ST_AsText(ST_POINTS(geom)) from bel_city limit 1;
+select ST_GeometryType(geom) from bel_city limit 10;
+select ST_AsText(ST_POINTS(geom)) from bel_city limit 10;
+table geometry_columns;
+table geometry_columns;
+select type from geometry_columns where f_table_name = 'bel_city';
+select ST_Distance((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'));
+select ST_DistanceSphere((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'));
+select ST_Distance(ST_Transform(select geom from bel_city where name = 'Ixelles'), ST_Transform(select geom from bel_city where name = 'Brugge'));
+select ST_Distance(ST_Transform((select geom from bel_city where name = 'Ixelles'), 3812), ST_Transform((select geom from bel_city where name = 'Brugge'), 3812));
+select 'SPHEROID["WGS 84",6378137,298.257223563]';
+select ST_AsText('SPHEROID["WGS 84",6378137,298.257223563]');
+select ST_AsText('SPHEROID["WGS 84",6378137,298.257223563]');
+select 'SPHEROID["WGS 84",6378137,298.257223563]';
+select ST_DistanceSphere((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'));
+select ST_Distance_Sphere((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'));
+select ST_Distance_Sphere((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'));
+select ST_DistanceSpheroid((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'), 'SPHEROID["WGS 84",6378137,298.257223563]');
+select srid from spatial_ref_sys;
+select * from spatial_ref_sys where srid = 3812;
+select * from spatial_ref_sys where srid = 4326;
+select ST_DistanceSpheroid((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'), 'SPHEROID["GRS 1980",6378137,298.257222101]');
+select ST_DistanceSpheroid((select geom from bel_city where name = 'Ixelles'), (select geom from bel_city where name = 'Brugge'), 'SPHEROID["WGS 84",6378137,298.257223563]');
+select geom from bel_prov where name = 'Brabant';
+select ST_AsText(geom) from bel_prov where name = 'Brabant';
+\! clear
+select ST_AsText(ST_Envelope(geom)) from bel_prov where name = 'Brabant';
+select ST_AsText(ST_Envelope( ST_Transform(geom, 3812))) from bel_prov where name = 'Brabant';
+select ST_AsText(ST_Envelope(geom)) from bel_prov where name = 'Brabant';
+SELECT ST_AsText(ST_Union(geom)) FROM (SELECT geom FROM bel_regn UNION SELECT geom FROM bel_prov) AS g;
+\! clear
+\d belriver
+select gid, name from belriver limit 10l
+;
+select gid, name from belriver limit 10;
+select gid, name from belriver limit 100;
+\! clear
+select name, ST_Length2DSpheroid(geom, 'SPHEROID["WGS 84",6378137,298.257223563]') as length from belriver;
+select name, ST_Length2DSpheroid(geom, 'SPHEROID["GRS 1980",6378137,298.257222101]') as length from belriver;
+\! clear
+select c.name as city, r.name as river from bel_city c join belriver r on ST_DistanceSphere(c.geom, r.geom) < 1000;
+select c.name as city, r.name as river from bel_city c join belriver r on ST_DistanceSphere(c.geom, r.geom) < 1000;
+\! clear
+select c.name as city, r.name as river, ST_DistanceSphere(c.geom, r.geom) as distance from bel_city c join belriver r on ST_DistanceSphere(c.geom, r.geom) < 1000;
+select c.name as city, r.name as river, ST_DistanceSphere(c.geom, r.geom) as distance from bel_city c join belriver r on ST_DistanceSphere(c.geom, r.geom) < 1000 order by distance;
+select c.name as city, r.name as river, ST_DistanceSphere(c.geom, r.geom) as distance from bel_city c join belriver r on distance < 1000 order by distance;
+select c.name as city, r.name as river, ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') as distance from bel_city c join belriver r on ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') < 1000;
+select c.name as city, r.name as river, ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') as distance from bel_city c join belriver r on ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') < 1000 order by distance;
+select c.name as city, r.name as river, ST_DistanceSphere(c.geom, r.geom) as distance, ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') as accurate_distance, (accurate_distance - distance) as difference from bel_city c join belriver r on ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') < 1000 order by distance;
+select c.name as city, r.name as river, ST_DistanceSphere(c.geom, r.geom) as distance, ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') as accurate_distance, (ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') - ST_DistanceSphere(c.geom, r.geom)) as difference from bel_city c join belriver r on ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') < 1000 order by distance;
+select c.name as city, r.name as river, ST_DistanceSphere(c.geom, r.geom) as distance, ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') as accurate_distance, (ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') - ST_DistanceSphere(c.geom, r.geom)) as difference from bel_city c join belriver r on ST_DistanceSpheroid(c.geom, r.geom, 'SPHEROID["GRS_1980",6378137,298.257222101]') < 1000 order by difference desc;
+CREATE TABLE belriver_geog AS SELECT gid, id, name, Geography(geom) AS geog FROM belriver;
+CREATE TABLE bel_city_geog AS SELECT gid, id, name, Geography(geom) AS geog FROM bel_city;
+CREATE TABLE river_cities AS SELECT DISTINCT ON (c.gid) c.gid, c.id, c.name, c.geog FROM bel_city_geog c JOIN belriver_geog r ON ST_DWithin(c.geog, r.geog, 1000);
+table river_cities limit 10;
+\! clear
+select p.name as province, r.name as river from bel_prov p, belriver r where ST_Intersects(p.geom, r.geom);
+select p.name as province, r.name as river, ST_Length2D_Spheroid(ST_Intersection(r.geom, p.geom), 'SPHEROID["GRS_1980", 6378137, 298.257222101]') as shared_length from bel_prov p, belriver r where ST_Intersects(p.geom, r.geom);
+SELECT r.name, p.name, ST_Length2D_Spheroid(ST_Intersection(r.geom, p.geom), 'SPHEROID["GRS_1980", 6378137, 298.257222101]') FROM belriver r, bel_prov p WHERE ST_Intersects(r.geom, p.geom);
+select p.name as province, r.name as river, ST_Length2DSpheroid(ST_Intersection(r.geom, p.geom), 'SPHEROID["GRS_1980", 6378137, 298.257222101]') as shared_length from bel_prov p, belriver r where ST_Intersects(p.geom, r.geom);
+select p.name as province, r.name as river, ST_Length2DSpheroid(ST_Intersection(r.geom, p.geom), 'SPHEROID["GRS_1980", 6378137, 298.257222101]') as shared_length from bel_prov p, belriver r where ST_Intersects(p.geom, r.geom) order by shared_length desc;
+\s spatial_db_lab_1.txt
