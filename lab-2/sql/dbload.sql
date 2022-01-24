@@ -1,4 +1,3 @@
-Begin transaction
 use Lab_2
 delete from Dependent
 delete from DeptLocations
@@ -76,4 +75,4 @@ INSERT Dependent values('987654321', 'Abner', 'M', '29-02-1932', 'Spouse')
 INSERT Dependent values('123456789', 'Michael', 'M', '01-01-1978', 'Son')
 INSERT Dependent values('123456789', 'Alice', 'F', '31-12-1978', 'Daughter')
 INSERT Dependent values('123456789', 'Elizabeth', 'F', '05-05-1957', 'Spouse')
-commit
+
