@@ -9,8 +9,7 @@ Exercise - 3
 
 */
 
-select * from Employee
-
+GO
 CREATE TRIGGER no_employee_earns_more_than_their_poor_supervisor
 on Employee
 after INSERT, UPDATE
