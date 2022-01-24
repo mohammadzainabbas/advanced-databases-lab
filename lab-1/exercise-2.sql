@@ -37,10 +37,6 @@ Trigger for 1st event(s)
 =================================
 */
 
-select * from PhDStudent;
-select * from Course;
-select * from CourseTaken;
-
 GO
 CREATE TRIGGER on_phd_student_insert_atleast_one_course
 ON PhDStudent
@@ -71,45 +67,53 @@ Trigger for 2nd event(s)
 =================================
 */
 GO
-CREATE TRIGGER on_professor_update
-ON Professor
+CREATE TRIGGER on_course_taken_update_atleast_one_course
+ON CourseTaken
 AFTER UPDATE
 AS
 IF EXISTS (
-    SELECT * FROM inserted I, PhDStudent P
-    WHERE P.Supervisor = I.ProfNo 
-    AND I.Laboratory != P.Laboratory
+    SELECT * FROM PhDStudent P
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM CourseTaken CT
+        WHERE P.StudentNo = CT.StudentNo
+    )
 )
 BEGIN
 
-UPDATE PhDStudent
-SET Laboratory = ( SELECT I.Laboratory FROM inserted I WHERE I.ProfNo = Supervisor )
-WHERE Supervisor = ( SELECT I2.ProfNo FROM inserted I2 )
+RAISERROR('[[ Constraint Error ]]: A PhD student must take at least one course.', 1, 1)
+
+ROLLBACK
 
 END
+GO
 
 /*====================================================================================================================*/
 
 /*
 =================================
-Trigger for 4th event(s)
+Trigger for 3rd event(s)
 =================================
 */
 
 GO
-CREATE TRIGGER on_professor_delete
-ON Professor
+CREATE TRIGGER on_course_delete_atleast_one_course
+ON Course
 AFTER DELETE
 AS
 IF EXISTS (
-    SELECT * FROM deleted D, PhDStudent P
-    WHERE P.Supervisor = D.ProfNo
-    AND D.Laboratory = P.Laboratory
+    SELECT * FROM PhDStudent P
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM CourseTaken CT
+        WHERE P.StudentNo = CT.StudentNo
+    )
 )
 BEGIN
 
-RAISERROR('[[ Constraint Error ]]: A PhD student must work in the same laboratory as his/her supervisor', 1, 1)
+RAISERROR('[[ Constraint Error ]]: A PhD student must take at least one course.', 1, 1)
 
 ROLLBACK
 
 END
+GO
