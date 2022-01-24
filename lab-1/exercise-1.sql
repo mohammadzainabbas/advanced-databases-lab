@@ -41,7 +41,7 @@ Trigger for 1st & 2nd event(s)
 =================================
 */
 
-CREATE TRIGGER MY_NOT_SO_AWESOME_TRIGGER_WHICH_ABORTS
+CREATE TRIGGER on_phd_student_insert_and_update
 ON PhDStudent
 AFTER UPDATE, INSERT
 AS
