@@ -107,3 +107,21 @@ END
 Trigger for 4th event(s)
 =================================
 */
+
+GO
+CREATE TRIGGER on_professor_delete
+ON Professor
+AFTER DELETE
+AS
+IF EXISTS (
+    SELECT * FROM deleted D, PhDStudent P
+    WHERE P.Supervisor = D.ProfNo
+    AND D.Laboratory = P.Laboratory
+)
+BEGIN
+
+RAISERROR('[[ Constraint Error ]]: A PhD student must work in the same laboratory as his/her supervisor', 1, 1)
+
+ROLLBACK
+
+END
