@@ -35,6 +35,7 @@ Instead of -> Modify the updation
 
 */
 
+
 /*
 =================================
 Trigger for 1st & 2nd event(s)
@@ -57,6 +58,7 @@ RAISERROR('[[ Constraint Error ]]: A PhD student must work in the same laborator
 ROLLBACK
 
 END
+GO
 
 /*
 Checking for no. 1
@@ -78,5 +80,30 @@ WHERE StudentNo = '12345678'
 /*
 =================================
 Trigger for 3rd event(s)
+=================================
+*/
+GO
+CREATE TRIGGER on_professor_update
+ON Professor
+AFTER UPDATE
+AS
+IF EXISTS (
+    SELECT * FROM inserted I, PhDStudent P
+    WHERE P.Supervisor = I.ProfNo 
+    AND I.Laboratory != P.Laboratory
+)
+BEGIN
+
+UPDATE PhDStudent
+SET Laboratory = ( SELECT I.Laboratory FROM inserted I WHERE I.ProfNo = Supervisor )
+WHERE Supervisor = ( SELECT I2.ProfNo FROM inserted I2 )
+
+END
+
+/*====================================================================================================================*/
+
+/*
+=================================
+Trigger for 4th event(s)
 =================================
 */
