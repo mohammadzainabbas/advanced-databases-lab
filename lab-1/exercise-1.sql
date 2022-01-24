@@ -42,7 +42,7 @@ Trigger for 1st & 2nd event(s)
 =================================
 */
 
-CREATE TRIGGER on_phd_student_insert_and_update
+CREATE TRIGGER on_phd_student_insert_and_update_same_laboratory
 ON PhDStudent
 AFTER UPDATE, INSERT
 AS
@@ -83,7 +83,7 @@ Trigger for 3rd event(s)
 =================================
 */
 GO
-CREATE TRIGGER on_professor_update
+CREATE TRIGGER on_professor_update_same_laboratory
 ON Professor
 AFTER UPDATE
 AS
@@ -109,7 +109,7 @@ Trigger for 4th event(s)
 */
 
 GO
-CREATE TRIGGER on_professor_delete
+CREATE TRIGGER on_professor_delete_same_laboratory
 ON Professor
 AFTER DELETE
 AS
