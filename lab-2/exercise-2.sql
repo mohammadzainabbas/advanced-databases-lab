@@ -9,8 +9,7 @@ Exercise - 2
 
 */
 
-select * from Employee
-
+GO
 CREATE TRIGGER no_older_employee_for_poor_supervisor
 on Employee
 after INSERT, UPDATE
